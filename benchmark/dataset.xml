@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system_radar>
+  <metadata>
+    <title>Enterprise Microservices Radar</title>
+    <as_of>2026-10-16</as_of>
+    <owner>Architecture Guild</owner>
+    <environment>Production</environment>
+  </metadata>
+  <services>
+    <service>
+      <name>auth-gateway</name>
+      <service_mesh>Istio</service_mesh>
+      <runtime>Go 1.22</runtime>
+      <database>Redis 7.2</database>
+      <p99_latency_ms>14</p99_latency_ms>
+      <uptime_pct>99.99</uptime_pct>
+      <tier>Critical</tier>
+    </service>
+    <service>
+      <name>billing-ledger</name>
+      <service_mesh>Linkerd</service_mesh>
+      <runtime>PHP 8.3 Laravel</runtime>
+      <database>PostgreSQL 16</database>
+      <p99_latency_ms>38</p99_latency_ms>
+      <uptime_pct>99.95</uptime_pct>
+      <tier>Critical</tier>
+    </service>
+    <service>
+      <name>notification-hub</name>
+      <service_mesh>Consul</service_mesh>
+      <runtime>Node.js 20</runtime>
+      <database>MongoDB 7.0</database>
+      <p99_latency_ms>85</p99_latency_ms>
+      <uptime_pct>99.90</uptime_pct>
+      <tier>Standard</tier>
+    </service>
+    <service>
+      <name>order-router</name>
+      <service_mesh>Istio</service_mesh>
+      <runtime>Java 21 Spring</runtime>
+      <database>MySQL 8.4</database>
+      <p99_latency_ms>42</p99_latency_ms>
+      <uptime_pct>99.99</uptime_pct>
+      <tier>Critical</tier>
+    </service>
+    <service>
+      <name>identity-vault</name>
+      <service_mesh>Linkerd</service_mesh>
+      <runtime>Rust</runtime>
+      <database>PostgreSQL 16</database>
+      <p99_latency_ms>8</p99_latency_ms>
+      <uptime_pct>99.99</uptime_pct>
+      <tier>Critical</tier>
+    </service>
+    <service>
+      <name>recommendation-engine</name>
+      <service_mesh>Kuma</service_mesh>
+      <runtime>Python 3.12</runtime>
+      <database>Qdrant</database>
+      <p99_latency_ms>120</p99_latency_ms>
+      <uptime_pct>99.80</uptime_pct>
+      <tier>Analytics</tier>
+    </service>
+    <service>
+      <name>search-indexer</name>
+      <service_mesh>Kuma</service_mesh>
+      <runtime>Go 1.22</runtime>
+      <database>Elasticsearch 8</database>
+      <p99_latency_ms>65</p99_latency_ms>
+      <uptime_pct>99.90</uptime_pct>
+      <tier>Standard</tier>
+    </service>
+    <service>
+      <name>payment-webhook-gateway</name>
+      <service_mesh>Istio</service_mesh>
+      <runtime>PHP 8.3 Laravel</runtime>
+      <database>Redis 7.2</database>
+      <p99_latency_ms>22</p99_latency_ms>
+      <uptime_pct>99.99</uptime_pct>
+      <tier>Critical</tier>
+    </service>
+    <service>
+      <name>reporting-batch</name>
+      <service_mesh>None</service_mesh>
+      <runtime>Python 3.12</runtime>
+      <database>ClickHouse</database>
+      <p99_latency_ms>450</p99_latency_ms>
+      <uptime_pct>99.50</uptime_pct>
+      <tier>Batch</tier>
+    </service>
+    <service>
+      <name>audit-log-pipeline</name>
+      <service_mesh>Consul</service_mesh>
+      <runtime>Go 1.22</runtime>
+      <database>ClickHouse</database>
+      <p99_latency_ms>35</p99_latency_ms>
+      <uptime_pct>99.90</uptime_pct>
+      <tier>Standard</tier>
+    </service>
+    <service>
+      <name>inventory-sync</name>
+      <service_mesh>Linkerd</service_mesh>
+      <runtime>Go 1.22</runtime>
+      <database>MySQL 8.4</database>
+      <p99_latency_ms>48</p99_latency_ms>
+      <uptime_pct>99.95</uptime_pct>
+      <tier>Critical</tier>
+    </service>
+    <service>
+      <name>cart-session-store</name>
+      <service_mesh>Istio</service_mesh>
+      <runtime>Rust</runtime>
+      <database>Redis 7.2</database>
+      <p99_latency_ms>6</p99_latency_ms>
+      <uptime_pct>99.99</uptime_pct>
+      <tier>Critical</tier>
+    </service>
+    <service>
+      <name>catalog-read-api</name>
+      <service_mesh>Istio</service_mesh>
+      <runtime>Go 1.22</runtime>
+      <database>MongoDB 7.0</database>
+      <p99_latency_ms>18</p99_latency_ms>
+      <uptime_pct>99.95</uptime_pct>
+      <tier>Standard</tier>
+    </service>
+    <service>
+      <name>shipping-calculator</name>
+      <service_mesh>Consul</service_mesh>
+      <runtime>Python 3.12</runtime>
+      <database>PostgreSQL 16</database>
+      <p99_latency_ms>92</p99_latency_ms>
+      <uptime_pct>99.85</uptime_pct>
+      <tier>Standard</tier>
+    </service>
+    <service>
+      <name>discount-rule-engine</name>
+      <service_mesh>Linkerd</service_mesh>
+      <runtime>PHP 8.3 Laravel</runtime>
+      <database>Redis 7.2</database>
+      <p99_latency_ms>19</p99_latency_ms>
+      <uptime_pct>99.90</uptime_pct>
+      <tier>Standard</tier>
+    </service>
+    <service>
+      <name>fraud-detection-stream</name>
+      <service_mesh>Istio</service_mesh>
+      <runtime>Python 3.12</runtime>
+      <database>Kafka+Redis</database>
+      <p99_latency_ms>45</p99_latency_ms>
+      <uptime_pct>99.95</uptime_pct>
+      <tier>Critical</tier>
+    </service>
+    <service>
+      <name>analytics-event-collector</name>
+      <service_mesh>Kuma</service_mesh>
+      <runtime>Go 1.22</runtime>
+      <database>ClickHouse</database>
+      <p99_latency_ms>12</p99_latency_ms>
+      <uptime_pct>99.90</uptime_pct>
+      <tier>Standard</tier>
+    </service>
+    <service>
+      <name>cdn-edge-origin</name>
+      <service_mesh>None</service_mesh>
+      <runtime>Nginx Lua</runtime>
+      <database>Redis 7.2</database>
+      <p99_latency_ms>4</p99_latency_ms>
+      <uptime_pct>99.99</uptime_pct>
+      <tier>Critical</tier>
+    </service>
+    <service>
+      <name>customer-crm-sync</name>
+      <service_mesh>Consul</service_mesh>
+      <runtime>Node.js 20</runtime>
+      <database>PostgreSQL 16</database>
+      <p99_latency_ms>110</p99_latency_ms>
+      <uptime_pct>99.70</uptime_pct>
+      <tier>Batch</tier>
+    </service>
+    <service>
+      <name>api-token-authorizer</name>
+      <service_mesh>Istio</service_mesh>
+      <runtime>Rust</runtime>
+      <database>Redis 7.2</database>
+      <p99_latency_ms>5</p99_latency_ms>
+      <uptime_pct>99.99</uptime_pct>
+      <tier>Critical</tier>
+    </service>
+  </services>
+  <rules>
+    <rule>P99 latency above 100ms triggers automatic scaling alert.</rule>
+    <rule>Critical tier services require multi-region Redis failover and double-entry reconciliation.</rule>
+    <rule>Zero unencrypted inter-service RPC allowed across all service meshes.</rule>
+  </rules>
+</system_radar>

@@ -1,0 +1,45 @@
+{
+  "Semantic HTML": {
+    "bytes": 6684,
+    "chars": 6684,
+    "lines": 228,
+    "tokens_cl100k": 1911,
+    "tokens_o200k": 1916
+  },
+  "Pure XML": {
+    "bytes": 6336,
+    "chars": 6336,
+    "lines": 196,
+    "tokens_cl100k": 1858,
+    "tokens_o200k": 1905
+  },
+  "JSON (Indented)": {
+    "bytes": 4730,
+    "chars": 4730,
+    "lines": 190,
+    "tokens_cl100k": 1473,
+    "tokens_o200k": 1487
+  },
+  "Markdown": {
+    "bytes": 2145,
+    "chars": 2145,
+    "lines": 36,
+    "tokens_cl100k": 696,
+    "tokens_o200k": 704
+  },
+  "Single-File XOON": {
+    "bytes": 2417,
+    "chars": 2417,
+    "lines": 56,
+    "tokens_cl100k": 794,
+    "tokens_o200k": 802
+  },
+  "Analysis": {
+    "savings_vs_html_pct": 58.45,
+    "savings_vs_xml_pct": 57.27,
+    "savings_vs_json_pct": 46.1,
+    "density_multiplier_vs_html": 2.41,
+    "density_multiplier_vs_xml": 2.34,
+    "density_multiplier_vs_json": 1.86
+  }
+}

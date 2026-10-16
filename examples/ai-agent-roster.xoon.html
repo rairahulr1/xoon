@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" data-engine="xoon">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Autonomous AI Agent Swarm Roster</title>
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./xoon-renderer.js"></script>
+</head>
+<body>
+
+<article class="xoon-container">
+  <header class="document-header">
+    <h1>Autonomous AI Agent Swarm Roster</h1>
+    <metadata>
+      title: Autonomous AI Agent Swarm Roster
+      as_of: 2026-10-16
+      owner: Multi-Agent Orchestrator
+      protocol: ACP Stdio JSON-RPC
+    </metadata>
+  </header>
+
+  <main id="app"></main>
+
+  <dataset id="data" type="text/xoon">
+  agents[6]{agent_id,cli,model,role,autonomy_tier,status}:
+    architect,agy,gpt-6-astra,System Design & Planning,Tier 3 (Full),Active
+    backend-builder,opencode,deepseek-v4.1-flash,API & DB Engineering,Tier 2 (Supervised),Active
+    frontend-vibe,vibe,claude-sonnet-4-5,Tailwind & Reactive UI,Tier 2 (Supervised),Idle
+    ops-sentinel,cmd,gpt-6-luna,Docker & System Diagnostics,Tier 2 (Supervised),Active
+    quick-fixer,mcode,minimax-01,One-Line Patches & Regex,Tier 1 (Scout),Idle
+    doc-synchronizer,opencode,fledge-alpha-free,XOON Single-File Sync,Tier 3 (Full),Active
+
+  handoff_rules[3]:
+    - Architect agent must approve all database migrations before builder begins execution.
+    - Ops sentinel monitors memory usage on host (<6 GiB ceiling) and kills hung subprocesses.
+    - All shared context passing between agents must use XOON datasets.
+  </dataset>
+</article>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" data-engine="xoon">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>XOON Document Template</title>
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./xoon-renderer.js"></script>
+</head>
+<body>
+
+<article class="xoon-container">
+  <header class="document-header">
+    <h1>Project Title</h1>
+    <metadata>
+      title: Project Title
+      as_of: 2026-10-16
+      owner: Lead Architect
+      version: 1.0.0
+    </metadata>
+  </header>
+
+  <main id="app" aria-live="polite">
+    <!-- Hydrated automatically in browser -->
+  </main>
+
+  <dataset id="data" type="text/xoon">
+  records[2]{id,title,status,priority}:
+    TASK-01,Setup XOON single-file document pipeline,Completed,Critical
+    TASK-02,Integrate automated AI parsing hooks,InProgress,High
+
+  milestones[2]:
+    - Multi-agent context preservation validated.
+    - Zero dual-file sync drift confirmed.
+  </dataset>
+
+  <rules>
+    - Keep CSS and JS external to preserve AI context window.
+    - Validate schema counts with xoon validate before pushing.
+  </rules>
+</article>
+
+</body>
+</html>

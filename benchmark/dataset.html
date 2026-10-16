@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise Microservices Radar</title>
+</head>
+<body>
+  <header>
+    <h1>Enterprise Microservices Radar</h1>
+    <section class="metadata">
+      <p><strong>as_of:</strong> <time datetime="2026-10-16">2026-10-16</time></p>
+      <p><strong>owner:</strong> Architecture Guild</p>
+      <p><strong>environment:</strong> Production</p>
+    </section>
+  </header>
+  <main>
+    <section>
+      <h2>Services</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Service Mesh</th>
+              <th scope="col">Runtime</th>
+              <th scope="col">Database</th>
+              <th scope="col">P99 Latency (ms)</th>
+              <th scope="col">Uptime (%)</th>
+              <th scope="col">Tier</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>auth-gateway</td>
+              <td>Istio</td>
+              <td>Go 1.22</td>
+              <td>Redis 7.2</td>
+              <td>14</td>
+              <td>99.99</td>
+              <td>Critical</td>
+            </tr>
+            <tr>
+              <td>billing-ledger</td>
+              <td>Linkerd</td>
+              <td>PHP 8.3 Laravel</td>
+              <td>PostgreSQL 16</td>
+              <td>38</td>
+              <td>99.95</td>
+              <td>Critical</td>
+            </tr>
+            <tr>
+              <td>notification-hub</td>
+              <td>Consul</td>
+              <td>Node.js 20</td>
+              <td>MongoDB 7.0</td>
+              <td>85</td>
+              <td>99.90</td>
+              <td>Standard</td>
+            </tr>
+            <tr>
+              <td>order-router</td>
+              <td>Istio</td>
+              <td>Java 21 Spring</td>
+              <td>MySQL 8.4</td>
+              <td>42</td>
+              <td>99.99</td>
+              <td>Critical</td>
+            </tr>
+            <tr>
+              <td>identity-vault</td>
+              <td>Linkerd</td>
+              <td>Rust</td>
+              <td>PostgreSQL 16</td>
+              <td>8</td>
+              <td>99.99</td>
+              <td>Critical</td>
+            </tr>
+            <tr>
+              <td>recommendation-engine</td>
+              <td>Kuma</td>
+              <td>Python 3.12</td>
+              <td>Qdrant</td>
+              <td>120</td>
+              <td>99.80</td>
+              <td>Analytics</td>
+            </tr>
+            <tr>
+              <td>search-indexer</td>
+              <td>Kuma</td>
+              <td>Go 1.22</td>
+              <td>Elasticsearch 8</td>
+              <td>65</td>
+              <td>99.90</td>
+              <td>Standard</td>
+            </tr>
+            <tr>
+              <td>payment-webhook-gateway</td>
+              <td>Istio</td>
+              <td>PHP 8.3 Laravel</td>
+              <td>Redis 7.2</td>
+              <td>22</td>
+              <td>99.99</td>
+              <td>Critical</td>
+            </tr>
+            <tr>
+              <td>reporting-batch</td>
+              <td>None</td>
+              <td>Python 3.12</td>
+              <td>ClickHouse</td>
+              <td>450</td>
+              <td>99.50</td>
+              <td>Batch</td>
+            </tr>
+            <tr>
+              <td>audit-log-pipeline</td>
+              <td>Consul</td>
+              <td>Go 1.22</td>
+              <td>ClickHouse</td>
+              <td>35</td>
+              <td>99.90</td>
+              <td>Standard</td>
+            </tr>
+            <tr>
+              <td>inventory-sync</td>
+              <td>Linkerd</td>
+              <td>Go 1.22</td>
+              <td>MySQL 8.4</td>
+              <td>48</td>
+              <td>99.95</td>
+              <td>Critical</td>
+            </tr>
+            <tr>
+              <td>cart-session-store</td>
+              <td>Istio</td>
+              <td>Rust</td>
+              <td>Redis 7.2</td>
+              <td>6</td>
+              <td>99.99</td>
+              <td>Critical</td>
+            </tr>
+            <tr>
+              <td>catalog-read-api</td>
+              <td>Istio</td>
+              <td>Go 1.22</td>
+              <td>MongoDB 7.0</td>
+              <td>18</td>
+              <td>99.95</td>
+              <td>Standard</td>
+            </tr>
+            <tr>
+              <td>shipping-calculator</td>
+              <td>Consul</td>
+              <td>Python 3.12</td>
+              <td>PostgreSQL 16</td>
+              <td>92</td>
+              <td>99.85</td>
+              <td>Standard</td>
+            </tr>
+            <tr>
+              <td>discount-rule-engine</td>
+              <td>Linkerd</td>
+              <td>PHP 8.3 Laravel</td>
+              <td>Redis 7.2</td>
+              <td>19</td>
+              <td>99.90</td>
+              <td>Standard</td>
+            </tr>
+            <tr>
+              <td>fraud-detection-stream</td>
+              <td>Istio</td>
+              <td>Python 3.12</td>
+              <td>Kafka+Redis</td>
+              <td>45</td>
+              <td>99.95</td>
+              <td>Critical</td>
+            </tr>
+            <tr>
+              <td>analytics-event-collector</td>
+              <td>Kuma</td>
+              <td>Go 1.22</td>
+              <td>ClickHouse</td>
+              <td>12</td>
+              <td>99.90</td>
+              <td>Standard</td>
+            </tr>
+            <tr>
+              <td>cdn-edge-origin</td>
+              <td>None</td>
+              <td>Nginx Lua</td>
+              <td>Redis 7.2</td>
+              <td>4</td>
+              <td>99.99</td>
+              <td>Critical</td>
+            </tr>
+            <tr>
+              <td>customer-crm-sync</td>
+              <td>Consul</td>
+              <td>Node.js 20</td>
+              <td>PostgreSQL 16</td>
+              <td>110</td>
+              <td>99.70</td>
+              <td>Batch</td>
+            </tr>
+            <tr>
+              <td>api-token-authorizer</td>
+              <td>Istio</td>
+              <td>Rust</td>
+              <td>Redis 7.2</td>
+              <td>5</td>
+              <td>99.99</td>
+              <td>Critical</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section>
+      <h2>Operational Rules &amp; Verification Constraints</h2>
+      <ul>
+        <li>P99 latency above 100ms triggers automatic scaling alert.</li>
+        <li>Critical tier services require multi-region Redis failover and double-entry reconciliation.</li>
+        <li>Zero unencrypted inter-service RPC allowed across all service meshes.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

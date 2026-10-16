@@ -1,0 +1,333 @@
+#!/usr/bin/env python3
+"""
+XOON (XML-Oriented Object Notation) CLI & Agent Utility
+Validate, format, inspect, and benchmark single-file XOON documents.
+
+Repository: https://github.com/rairahulr1/xoon
+License: MIT
+"""
+
+import sys
+import os
+import re
+import argparse
+import http.server
+import socketserver
+from pathlib import Path
+
+def extract_xoon_payload(content):
+    """Extract TOON/XOON data payload from single-file HTML or Markdown."""
+    # Check for <dataset ...> ... </dataset>
+    m = re.search(r'<dataset[^>]*>([\s\S]*?)</dataset>', content, re.IGNORECASE)
+    if m:
+        return m.group(1).strip()
+    
+    # Check for <script id="data" ...> ... </script>
+    m = re.search(r'<script\s+id=["\']data["\'][^>]*>([\s\S]*?)</script>', content, re.IGNORECASE)
+    if m:
+        return m.group(1).strip()
+        
+    # Check for ```toon or ```xoon in Markdown
+    m = re.search(r'```(?:xoon|toon)\n([\s\S]*?)\n```', content)
+    if m:
+        return m.group(1).strip()
+        
+    return None
+
+def validate_xoon_text(text):
+    """Validate schemas, column counts, and row totals."""
+    lines = text.splitlines()
+    errors = []
+    stats = {'tables': 0, 'rows': 0, 'lists': 0, 'items': 0, 'meta_keys': 0}
+    
+    current_sec = None
+    expected_cols = 0
+    declared_count = None
+    actual_count = 0
+    sec_type = None
+
+    def check_count():
+        nonlocal actual_count, declared_count, current_sec
+        if declared_count is not None and current_sec:
+            if actual_count != declared_count:
+                errors.append(f"Section '{current_sec}' declared [{declared_count}] entries, but found {actual_count}")
+
+    for idx, raw_line in enumerate(lines, 1):
+        trimmed = raw_line.strip()
+        if not trimmed or trimmed.startswith('#'):
+            continue
+
+        # Skip XML boundaries
+        if re.match(r'^</?[a-zA-Z0-9_-]+>$', trimmed):
+            continue
+
+        # Table header: name[count]{col1,col2,...}:
+        table_m = re.match(r'^([a-zA-Z0-9_-]+)(?:\[(\d*)\])?\{([^}]+)\}:?$', trimmed)
+        if table_m:
+            check_count()
+            current_sec = table_m.group(1)
+            declared_count = int(table_m.group(2)) if table_m.group(2) else None
+            fields = [f.strip() for f in table_m.group(3).split(',')]
+            expected_cols = len(fields)
+            sec_type = 'row'
+            actual_count = 0
+            stats['tables'] += 1
+            continue
+
+        # List header: name[count]:
+        list_m = re.match(r'^([a-zA-Z0-9_-]+)\[(\d*)\]:?$', trimmed)
+        if list_m:
+            check_count()
+            current_sec = list_m.group(1)
+            declared_count = int(list_m.group(2)) if list_m.group(2) else None
+            sec_type = 'item'
+            actual_count = 0
+            stats['lists'] += 1
+            continue
+
+        # Section block: name:
+        block_m = re.match(r'^([a-zA-Z0-9_-]+):$', trimmed)
+        if block_m:
+            check_count()
+            current_sec = block_m.group(1)
+            declared_count = None
+            sec_type = 'text'
+            actual_count = 0
+            continue
+
+        # Top-level KV: key: value
+        kv_m = re.match(r'^([a-zA-Z0-9_-]+):\s*(.+)$', trimmed)
+        if kv_m and not raw_line.startswith('  ') and not raw_line.startswith('\t'):
+            check_count()
+            current_sec = None
+            stats['meta_keys'] += 1
+            continue
+
+        # Parsing rows or items
+        if current_sec:
+            if sec_type == 'row':
+                cells = []
+                cur = ''
+                in_quotes = False
+                for c in trimmed:
+                    if c == '"':
+                        in_quotes = not in_quotes
+                    elif c == ',' and not in_quotes:
+                        cells.append(cur.strip())
+                        cur = ''
+                        continue
+                    cur += c
+                cells.append(cur.strip())
+
+                if expected_cols > 0 and len(cells) != expected_cols:
+                    errors.append(f"Line {idx} in '{current_sec}': expected {expected_cols} columns, found {len(cells)}")
+                actual_count += 1
+                stats['rows'] += 1
+            elif sec_type == 'item':
+                actual_count += 1
+                stats['items'] += 1
+
+    check_count()
+    return len(errors) == 0, errors, stats
+
+def cmd_validate(args):
+    path = Path(args.file).resolve()
+    if not path.exists():
+        print(f"Error: File not found: {path}", file=sys.stderr)
+        return 1
+
+    content = path.read_text(encoding='utf-8')
+    payload = extract_xoon_payload(content)
+    if not payload:
+        print(f"Error: No XOON/TOON payload found in {path.name}", file=sys.stderr)
+        return 1
+
+    is_valid, errors, stats = validate_xoon_text(payload)
+    if is_valid:
+        print(f"✓ VALID XOON: {path.name}")
+        print(f"  Tables:    {stats['tables']} ({stats['rows']} rows)")
+        print(f"  Lists:     {stats['lists']} ({stats['items']} items)")
+        print(f"  Metadata:  {stats['meta_keys']} keys")
+        return 0
+    else:
+        print(f"✗ INVALID XOON: {path.name} ({len(errors)} errors)", file=sys.stderr)
+        for err in errors:
+            print(f"  - {err}", file=sys.stderr)
+        return 1
+
+def cmd_format(args):
+    path = Path(args.file).resolve()
+    if not path.exists():
+        print(f"Error: File not found: {path}", file=sys.stderr)
+        return 1
+
+    content = path.read_text(encoding='utf-8')
+    payload = extract_xoon_payload(content)
+    if not payload:
+        print(f"Error: No XOON/TOON payload found in {path.name}", file=sys.stderr)
+        return 1
+
+    lines = payload.splitlines()
+    formatted = []
+    current_sec = None
+    sec_header_idx = None
+    sec_type = None
+    sec_fields = None
+    sec_entries = []
+
+    def flush_sec():
+        nonlocal sec_header_idx, sec_type, sec_entries, current_sec, sec_fields
+        if current_sec and sec_header_idx is not None:
+            count = len(sec_entries)
+            if sec_type == 'table':
+                formatted[sec_header_idx] = f"  {current_sec}[{count}]{{{','.join(sec_fields)}}}:"
+            elif sec_type == 'list':
+                formatted[sec_header_idx] = f"  {current_sec}[{count}]:"
+            for e in sec_entries:
+                formatted.append(f"    {e}")
+            formatted.append("")
+        sec_entries = []
+        current_sec = None
+        sec_header_idx = None
+
+    for line in lines:
+        trimmed = line.strip()
+        if not trimmed:
+            continue
+
+        if re.match(r'^</?[a-zA-Z0-9_-]+>$', trimmed):
+            flush_sec()
+            formatted.append(f"  {trimmed}")
+            continue
+
+        table_m = re.match(r'^([a-zA-Z0-9_-]+)(?:\[\d*\])?\{([^}]+)\}:?$', trimmed)
+        if table_m:
+            flush_sec()
+            current_sec = table_m.group(1)
+            sec_fields = [f.strip() for f in table_m.group(2).split(',')]
+            sec_type = 'table'
+            sec_header_idx = len(formatted)
+            formatted.append("")
+            continue
+
+        list_m = re.match(r'^([a-zA-Z0-9_-]+)(?:\[\d*\])?:?$', trimmed)
+        if list_m and not trimmed.includes(': ') and not trimmed.startswith('- '):
+            flush_sec()
+            current_sec = list_m.group(1)
+            sec_type = 'list'
+            sec_header_idx = len(formatted)
+            formatted.append("")
+            continue
+
+        if current_sec:
+            sec_entries.append(trimmed)
+        else:
+            formatted.append(f"  {trimmed}")
+
+    flush_sec()
+    new_payload = "\n".join(formatted).strip()
+
+    # Replace in place inside <dataset>...</dataset>
+    if '<dataset' in content:
+        new_content = re.sub(r'(<dataset[^>]*>)([\s\S]*?)(</dataset>)',
+                             f'\\1\n  {new_payload}\n  \\3', content)
+        path.write_text(new_content, encoding='utf-8')
+    elif '<script id="data"' in content:
+        new_content = re.sub(r'(<script\s+id=["\']data["\'][^>]*>)([\s\S]*?)(</script>)',
+                             f'\\1\n{new_payload}\n\\3', content)
+        path.write_text(new_content, encoding='utf-8')
+    elif path.suffix == '.md':
+        new_content = re.sub(r'```(?:xoon|toon)\n(.*?)\n```',
+                             f'```xoon\n{new_payload}\n```', content, flags=re.DOTALL)
+        path.write_text(new_content, encoding='utf-8')
+
+    print(f"✓ Formatted and updated counts in-place: {path.name}")
+    return 0
+
+def cmd_init(args):
+    name = args.name
+    filename = f"{name}.xoon.html" if not name.endswith('.html') else name
+    path = Path(filename).resolve()
+    if path.exists():
+        print(f"Error: {path.name} already exists.", file=sys.stderr)
+        return 1
+
+    template = f"""<!DOCTYPE html>
+<html lang="en" data-engine="xoon">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{name}</title>
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./xoon-renderer.js"></script>
+</head>
+<body>
+
+<article class="xoon-container">
+  <header class="document-header">
+    <h1>{name}</h1>
+    <metadata>
+      as_of: 2026-10-16
+      owner: Lead Architect
+      status: Draft
+    </metadata>
+  </header>
+
+  <main id="app" aria-live="polite">
+    <!-- Visual DOM hydrated at runtime by xoon-renderer.js -->
+  </main>
+
+  <dataset id="data" type="text/xoon">
+  records[2]{{id,title,status,priority}}:
+    REC-001,Design high-throughput ingestion pipeline,InProgress,High
+    REC-002,Deploy single-file XOON preview endpoints,Completed,Critical
+
+  guidelines[2]:
+    - Externalize all styling and rendering logic to preserve context window.
+    - Validate row counts against schema before committing changes.
+  </dataset>
+</article>
+
+</body>
+</html>
+"""
+    path.write_text(template, encoding='utf-8')
+    print(f"✓ Initialized new single-file XOON document: {path.name}")
+    return 0
+
+def cmd_serve(args):
+    port = args.port
+    print(f"Starting XOON preview server at http://localhost:{port}")
+    handler = http.server.SimpleHTTPRequestHandler
+    with socketserver.TCPServer(("", port), handler) as httpd:
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            print("\nServer stopped.")
+    return 0
+
+def main():
+    parser = argparse.ArgumentParser(description="XOON — XML-Oriented Object Notation CLI")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    p_val = subparsers.add_parser("validate", help="Validate schema and row counts of a XOON document")
+    p_val.add_argument("file", help="Path to XOON HTML or Markdown file")
+    p_val.set_defaults(func=cmd_validate)
+
+    p_fmt = subparsers.add_parser("format", help="Recompute row counts [N] and format in place")
+    p_fmt.add_argument("file", help="Path to XOON HTML or Markdown file")
+    p_fmt.set_defaults(func=cmd_format)
+
+    p_init = subparsers.add_parser("init", help="Create a new single-file XOON document")
+    p_init.add_argument("name", help="Document title / file name")
+    p_init.set_defaults(func=cmd_init)
+
+    p_srv = subparsers.add_parser("serve", help="Start local preview HTTP server")
+    p_srv.add_argument("--port", type=int, default=8000, help="Port to listen on (default 8000)")
+    p_srv.set_defaults(func=cmd_serve)
+
+    args = parser.parse_args()
+    sys.exit(args.func(args))
+
+if __name__ == "__main__":
+    main()
